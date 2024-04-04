@@ -5,22 +5,24 @@ import { Button } from "./ui/button";
 
 import { useRouter, usePathname } from "next/navigation";
 
-function EditForm() {
+function EditForm({ params }: any) {
   const router = useRouter();
   const pathname = usePathname();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
   // Extract ID from the current pathname
-  const id = extractIdFromUrl(pathname);
-
+  console.log("insdei edit form", params?.slug);
   useEffect(() => {
     // Use the id here as needed
-
+    console.log("ID: ", params.slug);
     async function get() {
-      const res = await fetch("http://localhost:3000/api/topics/" + id, {
-        cache: "no-store",
-      });
+      const res = await fetch(
+        "http://localhost:3000/api/topics/" + params.slug,
+        {
+          cache: "no-store",
+        }
+      );
       const data = await res.json();
       console.log(data.topic);
       setTitle(data.topic.title);
@@ -28,17 +30,11 @@ function EditForm() {
     }
 
     get();
-  }, [id]);
-
-  // Function to extract ID from URL
-  function extractIdFromUrl(url: string) {
-    const parts = url.split("/");
-    return parts[parts.length - 1];
-  }
+  }, [params.slug]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    fetch(`http://localhost:3000/api/topics/${id}`, {
+    fetch(`http://localhost:3000/api/topics/${params.slug}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
